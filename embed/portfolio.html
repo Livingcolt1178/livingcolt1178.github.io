@@ -1,0 +1,87 @@
+<!-- ================================================================
+     Portfolio index — paste this whole block into a Weebly "Embed Code" element.
+     Self-contained: only the fonts and the images load remotely.
+     ================================================================ -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto+Slab:wght@400;500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+.nb-page{background:#0c0d0f;color:#b6bcb5;font-family:Roboto,system-ui,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.nb-page *,.nb-page *::before,.nb-page *::after{box-sizing:border-box}
+.nb-page h1,.nb-page h2{font-family:'Roboto Slab',Georgia,serif;font-weight:500;color:#e8ebe6}
+.nb-page p{margin:0 0 8px}
+.nb-page a{color:#B3A369}
+.nb-page a:hover{color:#cdbe8c}
+.nb-page img{display:block;max-width:100%;height:auto}
+.nb-page figure{margin:0}
+.nb-page table{background:none}
+.nb-page th,.nb-page td{background:none}
+.nb-page pre{white-space:pre;tab-size:4;font-family:'Roboto Mono',ui-monospace,Menlo,monospace}
+.nb-page :focus-visible{outline:2px solid #B3A369;outline-offset:2px}
+.nb-page ::selection{background:rgba(179,163,105,.3)}
+@media(max-width:760px){.nb-page h1{font-size:30px!important}.nb-page [style*="repeat(4,1fr)"]{grid-template-columns:1fr 1fr!important}.nb-page [style*="grid-template-columns:1fr 1fr;gap:40px"],.nb-page [style*="grid-template-columns:1fr 300px"]{grid-template-columns:1fr!important}}
+</style>
+<div class="nb-page">
+<div style="max-width:1080px;margin:0 auto;padding:0 36px 90px">
+
+  <div style="border-bottom:1px solid #23262a;padding:44px 0 34px">
+    <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#B3A369;margin-bottom:22px">Portfolio · five projects</div>
+    <h1 style="font-family:'Roboto Slab',serif;font-weight:500;font-size:44px;line-height:1.14;letter-spacing:-0.02em;color:#e8ebe6;margin:0 0 18px;max-width:24ch">Things I have built, and what each one taught me</h1>
+    <p style="font-size:18px;line-height:1.6;max-width:62ch;color:#9aa09a;margin:0">Four hardware projects in SystemVerilog and one research paper. Each page covers how the build went, then the specifications underneath.</p>
+  </div>
+
+  <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+    <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:8px">1.0 — Hardware</div>
+    <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px">
+      <tbody>
+        <tr style="border-top:1px solid #23262a">
+          <td style="padding:20px 20px 20px 0;color:#B3A369;width:150px;vertical-align:top">RV32I-5S</td>
+          <td style="padding:20px 20px 20px 0;vertical-align:top">
+            <a href="https://nicholasbramhall.weebly.com/riscv-cpu.html" style="font-family:'Roboto Slab',serif;font-size:19px;text-decoration:none">RISC-V CPU</a>
+            <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">A 5-stage pipelined RV32I core, compared against Spike at every retirement. Control and data hazards are resolved in hardware rather than papered over with NOPs.</div>
+          </td>
+          <td style="padding:20px 0;vertical-align:top;width:170px;color:#8b9189;line-height:1.9">34/37 instructions<br>CPI 1.31<br><span style="color:#c8ccc6">In development</span></td>
+        </tr>
+        <tr style="border-top:1px solid #23262a">
+          <td style="padding:20px 20px 20px 0;color:#B3A369;vertical-align:top">DSP-RAF-N</td>
+          <td style="padding:20px 20px 20px 0;vertical-align:top">
+            <a href="https://nicholasbramhall.weebly.com/digital-signal-processing.html" style="font-family:'Roboto Slab',serif;font-size:19px;text-decoration:none">Rolling Average Filter</a>
+            <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">An ADC to DSP to DAC pipeline on a Spartan-7, filtering a live analog signal in real time. The measured rolloff at the 64-tap cutoff lands on −3 dB.</div>
+          </td>
+          <td style="padding:20px 0;vertical-align:top;color:#8b9189;line-height:1.9">368 LUTs · 0 DSP<br>21.6 kHz cutoff<br><span style="color:#5f8f5a">Hardware verified</span></td>
+        </tr>
+        <tr style="border-top:1px solid #23262a">
+          <td style="padding:20px 20px 20px 0;color:#B3A369;vertical-align:top">UART-8N1</td>
+          <td style="padding:20px 20px 20px 0;vertical-align:top">
+            <a href="https://nicholasbramhall.weebly.com/uart-core.html" style="font-family:'Roboto Slab',serif;font-size:19px;text-decoration:none">UART Core</a>
+            <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">An 8N1 transmitter and receiver with no board tied to it, verified by a self-checking loopback testbench.</div>
+          </td>
+          <td style="padding:20px 0;vertical-align:top;color:#8b9189;line-height:1.9">Mid-bit sampling<br>MIT licensed<br><span style="color:#5f8f5a">Verified</span></td>
+        </tr>
+        <tr style="border-top:1px solid #23262a;border-bottom:1px solid #23262a">
+          <td style="padding:20px 20px 20px 0;color:#B3A369;vertical-align:top">FSM-LOCK-4</td>
+          <td style="padding:20px 20px 20px 0;vertical-align:top">
+            <a href="https://nicholasbramhall.weebly.com/fsm-lock.html" style="font-family:'Roboto Slab',serif;font-size:19px;text-decoration:none">FSM Lock</a>
+            <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">A four-digit programmable lock on a Basys3. It passed every simulation and then failed on the board, which is how I learned what a synchronizer chain is for.</div>
+          </td>
+          <td style="padding:20px 0;vertical-align:top;color:#8b9189;line-height:1.9">10 states · 15 ms<br>0 latches<br><span style="color:#5f8f5a">Hardware tested</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="padding:40px 0 34px">
+    <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:8px">2.0 — Research</div>
+    <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px">
+      <tbody>
+        <tr style="border-top:1px solid #23262a;border-bottom:1px solid #23262a">
+          <td style="padding:20px 20px 20px 0;color:#B3A369;width:150px;vertical-align:top">AP RESEARCH</td>
+          <td style="padding:20px 20px 20px 0;vertical-align:top">
+            <a href="https://nicholasbramhall.weebly.com/ai-code-comparison-project.html" style="font-family:'Roboto Slab',serif;font-size:19px;text-decoration:none">AI Code Comparison</a>
+            <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">Seven AI tools measured on 42 generative and 15 refactoring problems in Java, scored on correctness, RAM, time to code, runtime, maintainability and accessibility.</div>
+          </td>
+          <td style="padding:20px 0;vertical-align:top;width:170px;color:#8b9189;line-height:1.9">7 tools · 57 problems<br><span style="color:#c8ccc6">Paper available</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>

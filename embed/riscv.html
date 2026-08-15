@@ -1,0 +1,177 @@
+<!-- ================================================================
+     RISC-V CPU — paste this whole block into a Weebly "Embed Code" element.
+     Self-contained: only the fonts and the figure images load remotely.
+     ================================================================ -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto+Slab:wght@400;500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+.nb-page{background:#0c0d0f;color:#b6bcb5;font-family:Roboto,system-ui,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.nb-page *,.nb-page *::before,.nb-page *::after{box-sizing:border-box}
+.nb-page h1,.nb-page h2{font-family:'Roboto Slab',Georgia,serif;font-weight:500;color:#e8ebe6}
+.nb-page p{margin:0 0 8px}
+.nb-page a{color:#B3A369}
+.nb-page a:hover{color:#cdbe8c}
+.nb-page img{display:block;max-width:100%;height:auto}
+.nb-page figure{margin:0}
+.nb-page table{background:none}
+.nb-page th,.nb-page td{background:none}
+.nb-page pre{white-space:pre;tab-size:4;font-family:'Roboto Mono',ui-monospace,Menlo,monospace}
+.nb-page summary{list-style:none;cursor:pointer}
+.nb-page summary::-webkit-details-marker{display:none}
+.nb-page summary::marker{content:""}
+.nb-page details>summary>span[data-plus]::after{content:"+"}
+.nb-page details[open]>summary>span[data-plus]::after{content:"\2212"}
+.nb-page :focus-visible{outline:2px solid #B3A369;outline-offset:2px}
+.nb-page ::selection{background:rgba(179,163,105,.3)}
+.nb-page .nb-slot{display:flex;align-items:center;justify-content:center;text-align:center;border:1px dashed #3a3e43;color:#6e746d;font-family:'Roboto Mono',monospace;font-size:12px;line-height:1.7;padding:24px;background:#111316}
+@media(max-width:760px){.nb-page h1{font-size:30px!important}.nb-page [style*="repeat(4,1fr)"]{grid-template-columns:1fr 1fr!important}.nb-page [style*="grid-template-columns:1fr 1fr;gap:36px"],.nb-page [style*="grid-template-columns:1fr 1fr;gap:20px"]{grid-template-columns:1fr!important}}
+</style>
+<div class="nb-page">
+<div style="max-width:1080px;margin:0 auto;padding:0 36px 90px">
+
+  <div style="border-bottom:1px solid #23262a;padding:44px 0 34px">
+    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#8b9189;margin-bottom:22px">
+      <span style="color:#B3A369">RV32I-5S</span><span style="color:#3a3e43">|</span>
+      <span>SystemVerilog</span><span style="color:#3a3e43">|</span>
+      <span>Rev. L3</span><span style="color:#3a3e43">|</span>
+      <span style="border:1px solid #3a3e43;padding:2px 8px;color:#c8ccc6">In development</span>
+    </div>
+    <h1 style="font-family:'Roboto Slab',serif;font-weight:500;font-size:44px;line-height:1.14;letter-spacing:-0.02em;color:#e8ebe6;margin:0 0 18px;max-width:20ch">A 5-stage RISC-V CPU that answers to a reference simulator</h1>
+    <p style="font-size:18px;line-height:1.6;max-width:62ch;color:#9aa09a;margin:0 0 26px">An RV32I core in SystemVerilog. Every instruction it retires is compared against Spike, and every hazard is resolved in hardware rather than papered over with NOPs.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a href="https://github.com/Livingcolt1178/riscv-cpu" target="_blank" rel="noopener" style="font-family:'Roboto Mono',monospace;border:1px solid #B3A369;color:#B3A369;padding:10px 16px;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none">View repository →</a>
+      <a href="#riscv-spec" style="font-family:'Roboto Mono',monospace;border:1px solid #3a3e43;color:#c8ccc6;padding:10px 16px;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none">Specifications</a>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #23262a">
+    <div style="padding:22px 20px 22px 0">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8b9189;margin-bottom:10px">ISA coverage</div>
+      <div style="font-family:'Roboto Slab',serif;font-weight:500;font-size:30px;line-height:1;color:#B3A369">34/37</div>
+    </div>
+    <div style="padding:22px 20px;border-left:1px solid #23262a">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8b9189;margin-bottom:10px">CPI, coverage.S</div>
+      <div style="font-family:'Roboto Slab',serif;font-weight:500;font-size:30px;line-height:1;color:#B3A369">1.31</div>
+    </div>
+    <div style="padding:22px 20px;border-left:1px solid #23262a">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8b9189;margin-bottom:10px">Regression</div>
+      <div style="font-family:'Roboto Slab',serif;font-weight:500;font-size:30px;line-height:1;color:#B3A369">5/5</div>
+    </div>
+    <div style="padding:22px 0 22px 20px;border-left:1px solid #23262a">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8b9189;margin-bottom:10px">Branch penalty</div>
+      <div style="font-family:'Roboto Slab',serif;font-weight:500;font-size:30px;line-height:1;color:#B3A369">2 cyc</div>
+    </div>
+  </div>
+
+  <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+    <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">1.0 — How it went</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:36px">
+      <div>
+        <p style="font-size:16px;line-height:1.72;margin:0 0 16px">I started this because I wanted to know what actually happens between an instruction word arriving in memory and a register being written. The first version was single-cycle. It matched Spike, which told me the decode and the datapath were right, and that gave me a working reference to pipeline against.</p>
+        <p style="font-size:16px;line-height:1.72;margin:0">Splitting it into five stages broke everything that depended on an instruction finishing before the next one started. To get the pipeline running before I had hazard hardware, I wrote a small script that pads test programs with NOPs between dependent instructions. Those padded programs are still in the regression suite, because they are the same code with the hazards removed: if forwarding ever starts producing wrong values, the padded and unpadded runs disagree and I know where to look.</p>
+      </div>
+      <div>
+        <p style="font-size:16px;line-height:1.72;margin:0 0 16px">Padding was never going to fix branches. NOPs behind a taken branch are harmless to the architecture, but they still retire, and Spike never executes them because RISC-V has no delay slots. The two retirement streams drift apart and lockstep falls over. Branches had to be flushed in hardware from the first pipelined version.</p>
+        <p style="font-size:16px;line-height:1.72;margin:0">The case forwarding cannot cover is a load consumed by the very next instruction, because the loaded value does not exist until the end of MEM. The hazard unit holds the PC and bubbles ID/EX for one cycle, turning it into a distance-2 dependency the existing path already handles. The cycle count backs this up: on the load-use program the arithmetic predicts 119 cycles and the core measures 120.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+    <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">2.0 — Regression output</div>
+    <pre style="font-family:'Roboto Mono',monospace;font-size:13px;line-height:1.75;color:#dfe4de;background:#00253f;border-left:2px solid #B3A369;padding:20px 22px;margin:0 0 12px;overflow-x:auto">$ ./scripts/run_tests.sh
+PASS  prog.S          rtl tests:   9, spike tests:   9, CPI: 1.556
+PASS  prog_nop.S      rtl tests:  23, spike tests:  23, CPI: 1.217
+PASS  coverage_nop.S  rtl tests: 271, spike tests: 271, CPI: 1.114
+PASS  coverage.S      rtl tests:  99, spike tests:  99, CPI: 1.313
+PASS  loaduse.S       rtl tests:  85, spike tests:  85, CPI: 1.412
+REGRESSION: PASS (5/5)</pre>
+    <div style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;letter-spacing:0.04em">Each program rebuilds the ELF, runs Spike for the commit log, then compiles and simulates the RTL.</div>
+  </div>
+
+  <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+    <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">3.0 — Development status</div>
+    <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px">
+      <tbody>
+        <tr style="border-top:1px solid #23262a">
+          <td style="padding:14px 20px 14px 0;color:#8b9189;letter-spacing:0.08em;width:120px;vertical-align:top">L1</td>
+          <td style="padding:14px 20px 14px 0;color:#5f8f5a;width:100px;vertical-align:top">COMPLETE</td>
+          <td style="padding:14px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6">Single-cycle RV32I, verified against Spike.</td>
+        </tr>
+        <tr style="border-top:1px solid #23262a">
+          <td style="padding:14px 20px 14px 0;color:#8b9189;letter-spacing:0.08em;vertical-align:top">L3a</td>
+          <td style="padding:14px 20px 14px 0;color:#5f8f5a;vertical-align:top">COMPLETE</td>
+          <td style="padding:14px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6">Five stages running, branches flushed in hardware, data hazards deferred by NOP padding.</td>
+        </tr>
+        <tr style="border-top:1px solid #23262a">
+          <td style="padding:14px 20px 14px 0;color:#8b9189;letter-spacing:0.08em;vertical-align:top">L3b</td>
+          <td style="padding:14px 20px 14px 0;color:#5f8f5a;vertical-align:top">COMPLETE</td>
+          <td style="padding:14px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6">Forwarding plus a one-cycle load-use interlock. Padding retired as a crutch, kept as a differential check.</td>
+        </tr>
+        <tr style="border-top:1px solid #23262a;border-bottom:1px solid #23262a">
+          <td style="padding:14px 20px 14px 0;color:#8b9189;letter-spacing:0.08em;vertical-align:top">M / L2</td>
+          <td style="padding:14px 20px 14px 0;color:#B3A369;vertical-align:top">NEXT</td>
+          <td style="padding:14px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6">M extension with a multi-cycle EX, then synthesis and timing closure on the Spartan-7. Synthesis moved after pipelining on purpose: block RAM has a registered read port, and a pipeline already has a stage boundary where that latency needs to live.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+    <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">4.0 — Target hardware</div>
+    <figure style="margin:0">
+      <div class="nb-slot" style="width:100%;height:320px">Replace this block with a Weebly Image element.<br>Drop a photo of the Spartan Edge board or your simulation setup</div>
+      <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">Seeed Spartan Edge Accelerator, xc7s15ftgb196-1.</figcaption>
+    </figure>
+  </div>
+
+  <div id="riscv-spec" style="padding:40px 0 34px">
+    <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">5.0 — Specifications</div>
+
+    <details style="border-top:1px solid #23262a;padding:16px 0">
+      <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>5.1 Pipeline and hazard handling</summary>
+      <div style="padding:16px 0 6px 26px;font-size:15px;line-height:1.72;max-width:74ch;color:#9aa09a">
+        <p style="margin:0 0 12px">Forwarding is a mux per operand at the entrance to EX, sourcing from the producer one instruction ahead or two ahead, with newer-wins priority. Both operands are decided independently, and the forwarded value feeds the ALU, the target-address constructor and the store-data path from a single point, so JALR bases and store data cannot be missed.</p>
+        <p style="margin:0">Pipeline registers are packed structs in riscv_pkg.sv, with control bundles nested inside them, so the taper is enforced by the type system. All four flops live in top_lvl.sv, which puts the entire stall and flush policy in eight adjacent lines. A zeroed register struct is a NOP bubble, so reset, flush and the retire signal fall out of the type definition.</p>
+      </div>
+    </details>
+
+    <details style="border-top:1px solid #23262a;padding:16px 0">
+      <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>5.2 Verification method</summary>
+      <div style="padding:16px 0 6px 26px;font-size:15px;line-height:1.72;max-width:74ch;color:#9aa09a">
+        <p style="margin:0 0 12px">Spike is the golden reference. Its value is independence: expected values come from software written by other people from the specification, not from the same understanding that produced the RTL. The testbench compares per retirement rather than per cycle, so pipeline fill, flushes and stalls need no special handling.</p>
+        <p style="margin:0 0 12px">Six fields are compared at the MEM/WB boundary, ordered cheapest to interpret first, so the earliest failure is also the most localising:</p>
+        <pre style="font-family:'Roboto Mono',monospace;font-size:12px;color:#dfe4de;background:#00253f;border-left:2px solid #B3A369;padding:12px 14px;margin:0 0 12px;overflow-x:auto">pc → instruction word → rd → rd_data → mem_addr → mem_data</pre>
+        <p style="margin:0">coverage.S is 108 instructions and retires 99. loaduse.S exists because coverage.S contains zero load-use pairs at distance two or less and therefore passes whether or not the interlock exists. It has 20 distance-1 pairs that must stall, 2 distance-2 pairs that must not, and two negative controls that check stalls do not fire when they shouldn't.</p>
+      </div>
+    </details>
+
+    <details style="border-top:1px solid #23262a;padding:16px 0">
+      <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>5.3 Memory map</summary>
+      <div style="padding:16px 0 6px 26px">
+        <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px;max-width:660px">
+          <tbody>
+            <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Reset vector</td><td style="padding:9px 0;color:#c8ccc6">0x8000_0000</td></tr>
+            <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Instruction memory</td><td style="padding:9px 0;color:#c8ccc6">1024 words, partial decode</td></tr>
+            <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Data memory</td><td style="padding:9px 0;color:#c8ccc6">256 words, partial decode</td></tr>
+            <tr><td style="padding:9px 0;color:#8b9189">tohost / fromhost</td><td style="padding:9px 0;color:#c8ccc6">0x8000_13F0 / 0x8000_13F8</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:15px;line-height:1.72;color:#9aa09a;margin:14px 0 0;max-width:74ch">The reset vector matches the link address because JAL, JALR and AUIPC write the PC itself into a register. A core booting at zero while Spike runs at 0x8000_0000 disagrees with the reference on all three.</p>
+      </div>
+    </details>
+
+    <details style="border-top:1px solid #23262a;border-bottom:1px solid #23262a;padding:16px 0">
+      <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>5.4 What is not done yet</summary>
+      <div style="padding:16px 0 6px 26px;font-size:15px;line-height:1.72;max-width:74ch;color:#9aa09a">
+        <p style="margin:0 0 12px">bge, bltu and bgeu are implemented but no test program exercises them, so they are unverified rather than known-good. Inverted and unsigned comparisons are exactly where a sign-handling bug would hide.</p>
+        <p style="margin:0">Three cases that trap in real RV32I are deferred: misaligned data access, misaligned instruction fetch, and illegal instructions, which currently decode to a silent NOP. FENCE, ECALL/EBREAK and the Zicsr instructions are not implemented. Synthesis and timing closure are not done.</p>
+      </div>
+    </details>
+  </div>
+
+  <div style="display:flex;gap:24px;align-items:center;font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding-top:8px">
+    <a href="https://github.com/Livingcolt1178/riscv-cpu" target="_blank" rel="noopener" style="text-decoration:none">Read the source →</a>
+    <a href="https://nicholasbramhall.weebly.com/portfolio.html" style="color:#8b9189;text-decoration:none">← Back to portfolio</a>
+  </div>
+</div>
+</div>

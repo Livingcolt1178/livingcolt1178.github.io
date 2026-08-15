@@ -1,0 +1,164 @@
+<!-- ================================================================
+     FSM Lock — paste this whole block into a Weebly "Embed Code" element.
+     Self-contained: only the fonts and the figure images load remotely.
+     ================================================================ -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto+Slab:wght@400;500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+.nb-page{background:#0c0d0f;color:#b6bcb5;font-family:Roboto,system-ui,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.nb-page *,.nb-page *::before,.nb-page *::after{box-sizing:border-box}
+.nb-page h1,.nb-page h2{font-family:'Roboto Slab',Georgia,serif;font-weight:500;color:#e8ebe6}
+.nb-page p{margin:0 0 8px}
+.nb-page a{color:#B3A369}
+.nb-page a:hover{color:#cdbe8c}
+.nb-page img{display:block;max-width:100%;height:auto}
+.nb-page figure{margin:0}
+.nb-page table{background:none}
+.nb-page th,.nb-page td{background:none}
+.nb-page pre{white-space:pre;tab-size:4;font-family:'Roboto Mono',ui-monospace,Menlo,monospace}
+.nb-page summary{list-style:none;cursor:pointer}
+.nb-page summary::-webkit-details-marker{display:none}
+.nb-page summary::marker{content:""}
+.nb-page details>summary>span[data-plus]::after{content:"+"}
+.nb-page details[open]>summary>span[data-plus]::after{content:"\2212"}
+.nb-page :focus-visible{outline:2px solid #B3A369;outline-offset:2px}
+.nb-page ::selection{background:rgba(179,163,105,.3)}
+.nb-page .nb-slot{display:flex;align-items:center;justify-content:center;text-align:center;border:1px dashed #3a3e43;color:#6e746d;font-family:'Roboto Mono',monospace;font-size:12px;line-height:1.7;padding:24px;background:#111316}
+@media(max-width:760px){.nb-page h1{font-size:30px!important}.nb-page [style*="repeat(4,1fr)"]{grid-template-columns:1fr 1fr!important}.nb-page [style*="grid-template-columns:1fr 1fr;gap:36px"],.nb-page [style*="grid-template-columns:1fr 1fr;gap:20px"]{grid-template-columns:1fr!important}}
+</style>
+<div class="nb-page">
+<div style="max-width:1080px;margin:0 auto;padding:0 36px 90px">
+
+  <div style="border-bottom:1px solid #23262a;padding:44px 0 34px">
+    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#8b9189;margin-bottom:22px">
+      <span style="color:#B3A369">FSM-LOCK-4</span><span style="color:#3a3e43">|</span>
+      <span>SystemVerilog</span><span style="color:#3a3e43">|</span>
+      <span>Basys3 · Artix-7</span><span style="color:#3a3e43">|</span>
+      <span style="border:1px solid #3a3e43;padding:2px 8px;color:#c8ccc6">Hardware tested</span>
+    </div>
+    <h1 style="font-family:'Roboto Slab',serif;font-weight:500;font-size:44px;line-height:1.14;letter-spacing:-0.02em;color:#e8ebe6;margin:0 0 18px;max-width:21ch">A programmable lock, and the day simulation stopped being enough</h1>
+    <p style="font-size:18px;line-height:1.6;max-width:62ch;color:#9aa09a;margin:0 0 26px">A four-digit lock in SystemVerilog on a Basys3. It passed every simulation and then behaved erratically on the board, which is how I learned what a synchronizer chain is for.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a href="https://github.com/Livingcolt1178/Finite-State-Machine-Lock" target="_blank" rel="noopener" style="font-family:'Roboto Mono',monospace;border:1px solid #B3A369;color:#B3A369;padding:10px 16px;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none">View repository →</a>
+      <a href="#fsm-spec" style="font-family:'Roboto Mono',monospace;border:1px solid #3a3e43;color:#c8ccc6;padding:10px 16px;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none">Specifications</a>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #23262a">
+    <div style="padding:22px 20px 22px 0">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8b9189;margin-bottom:10px">States</div>
+      <div style="font-family:'Roboto Slab',serif;font-weight:500;font-size:30px;line-height:1;color:#B3A369">10</div>
+    </div>
+    <div style="padding:22px 20px;border-left:1px solid #23262a">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8b9189;margin-bottom:10px">Debounce window</div>
+      <div style="font-family:'Roboto Slab',serif;font-weight:500;font-size:30px;line-height:1;color:#B3A369">15 ms</div>
+    </div>
+    <div style="padding:22px 20px;border-left:1px solid #23262a">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8b9189;margin-bottom:10px">Slice utilization</div>
+      <div style="font-family:'Roboto Slab',serif;font-weight:500;font-size:30px;line-height:1;color:#B3A369">&lt; 5%</div>
+    </div>
+    <div style="padding:22px 0 22px 20px;border-left:1px solid #23262a">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8b9189;margin-bottom:10px">Latches · crit. warnings</div>
+      <div style="font-family:'Roboto Slab',serif;font-weight:500;font-size:30px;line-height:1;color:#B3A369">0</div>
+    </div>
+  </div>
+
+  <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+    <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">1.0 — How it went</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:36px">
+      <div>
+        <p style="font-size:16px;line-height:1.72;margin:0 0 16px">The idea is small on purpose. On reset the lock is programmed with a four-digit sequence entered on two buttons. Enter the same sequence and a green LED comes on for five seconds before it locks itself again. Get it wrong and it blinks red and starts over. Sixteen combinations, so nothing here is secure, but the state machine has to be exactly right.</p>
+        <p style="font-size:16px;line-height:1.72;margin:0">In simulation it worked on the first serious pass. On the board it did not. Presses registered twice, or skipped, or dropped the lock into the error state for no reason I could see in the waveform, because the waveform was of a design that had never met a real button. A testbench drives inputs on clock edges. A person pressing a switch has no idea when the clock edge is.</p>
+      </div>
+      <div>
+        <p style="font-size:16px;line-height:1.72;margin:0 0 16px">The fix was a synchronizer chain. The first flop catches whatever the asynchronous input is doing and may go metastable. The second gives it a full cycle to settle. I ended up needing a third, because without it the settled value was being read one cycle before the debouncer's timing logic was ready for it, and the extra stage holds it long enough to be sampled correctly.</p>
+        <p style="font-size:16px;line-height:1.72;margin:0">Two smaller things caught me. The board's buttons are active low, so pressed means zero and the detection logic reads inverted, which looks wrong every time you come back to it. And the one-cycle sample_valid pulse could be consumed twice by different states if the FSM was not written carefully, which turned one press into two digits.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+    <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">2.0 — The three stages</div>
+    <pre style="font-family:'Roboto Mono',monospace;font-size:13px;line-height:1.8;color:#dfe4de;background:#00253f;border-left:2px solid #B3A369;padding:20px 22px;margin:0 0 18px;overflow-x:auto">button_1_sync_r1 &lt;= button_1;          // stage 1: catch metastability
+button_1_sync_r2 &lt;= button_1_sync_r1;  // stage 2: clean output
+button_1_input   &lt;= button_1_sync_r2;  // stage 3: debouncer input
+
+assign button_active_sync = (!button_1_sync_r2) || (!button_2_sync_r2);</pre>
+    <p style="font-size:16px;line-height:1.72;max-width:74ch;margin:0">Button-active detection reads stage two while the timing-critical debouncer input reads stage three. Synchronizing each button separately and combining them afterwards keeps the two buttons on independent timing paths instead of adding a stage of delay to the combined signal.</p>
+  </div>
+
+  <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+    <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">3.0 — Build order</div>
+    <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px">
+      <tbody>
+        <tr style="border-top:1px solid #23262a"><td style="padding:14px 20px 14px 0;color:#8b9189;letter-spacing:0.08em;width:230px;vertical-align:top">STATE MACHINE</td><td style="padding:14px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6">Ten states across programming, verification, unlocked and error, with combinational next-state logic and sequential updates.</td></tr>
+        <tr style="border-top:1px solid #23262a"><td style="padding:14px 20px 14px 0;color:#8b9189;letter-spacing:0.08em;vertical-align:top">TESTBENCH</td><td style="padding:14px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6">Reset behaviour, the programming sequence, verification on unlock, error entry and recovery, and LED output. All passing.</td></tr>
+        <tr style="border-top:1px solid #23262a"><td style="padding:14px 20px 14px 0;color:#8b9189;letter-spacing:0.08em;vertical-align:top">ON THE BOARD</td><td style="padding:14px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6">Erratic behaviour that simulation never showed. Diagnosed as metastability on the asynchronous button inputs.</td></tr>
+        <tr style="border-top:1px solid #23262a;border-bottom:1px solid #23262a"><td style="padding:14px 20px 14px 0;color:#B3A369;letter-spacing:0.08em;vertical-align:top">SYNCHRONIZED</td><td style="padding:14px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6">Three-stage chain per button, a 15 ms hold-and-release debouncer, and hardware behaviour that finally matched the simulation.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+    <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">4.0 — On the board</div>
+    <figure style="margin:0">
+      <div class="nb-slot" style="width:100%;height:320px">Replace this block with a Weebly Image element.<br>Drop a photo of the Basys3 with the green unlock LED lit</div>
+      <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">Basys3, Artix-7. Red at power-up, green on a correct sequence, auto-lock after five seconds.</figcaption>
+    </figure>
+  </div>
+
+  <div id="fsm-spec" style="padding:40px 0 34px">
+    <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">5.0 — Specifications</div>
+
+    <details style="border-top:1px solid #23262a;padding:16px 0">
+      <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>5.1 States and behaviour</summary>
+      <div style="padding:16px 0 6px 26px">
+        <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px">
+          <tbody>
+            <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 20px 9px 0;color:#B3A369;width:180px;vertical-align:top">PROGRAM_0-3</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">Initial programming of the four-digit password</td></tr>
+            <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 20px 9px 0;color:#B3A369;vertical-align:top">LOCKED_0-3</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">Verification, one state per digit</td></tr>
+            <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 20px 9px 0;color:#B3A369;vertical-align:top">UNLOCKED</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">Green LED, five-second timeout, then relock</td></tr>
+            <tr><td style="padding:9px 20px 9px 0;color:#B3A369;vertical-align:top">ERROR</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">Blinking LED, then back to LOCKED_0. Four wrong attempts trigger a half-second blink state.</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:15px;line-height:1.72;color:#9aa09a;margin:16px 0 0;max-width:74ch">Program the password by pressing button 1, button 2, button 1, button 2, holding each for about two seconds. Unlock by repeating it. Reset returns to PROGRAM_0.</p>
+      </div>
+    </details>
+
+    <details style="border-top:1px solid #23262a;padding:16px 0">
+      <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>5.2 Debounce strategy</summary>
+      <div style="padding:16px 0 6px 26px;font-size:15px;line-height:1.72;max-width:74ch;color:#9aa09a">
+        <p style="margin:0">A counter increments while the button is held. When it reaches the threshold of 1,500,000 cycles at 100 MHz, which is 15 ms, and the button is then released, a sample_valid pulse fires and the input is captured. The window rejects short glitches from mechanical bounce, which typically lasts 5 to 20 ms.</p>
+      </div>
+    </details>
+
+    <details style="border-top:1px solid #23262a;padding:16px 0">
+      <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>5.3 Synthesis results</summary>
+      <div style="padding:16px 0 6px 26px">
+        <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px;max-width:600px">
+          <tbody>
+            <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Device</td><td style="padding:9px 0;color:#c8ccc6">Artix-7, Basys3, Vivado 2024.1</td></tr>
+            <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Slice utilization</td><td style="padding:9px 0;color:#c8ccc6">Under 5%</td></tr>
+            <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Maximum clock frequency</td><td style="padding:9px 0;color:#c8ccc6">Above 100 MHz</td></tr>
+            <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Critical warnings</td><td style="padding:9px 0;color:#c8ccc6">0</td></tr>
+            <tr><td style="padding:9px 0;color:#8b9189">Inferred latches</td><td style="padding:9px 0;color:#c8ccc6">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <details style="border-top:1px solid #23262a;border-bottom:1px solid #23262a;padding:16px 0">
+      <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>5.4 Files</summary>
+      <div style="padding:16px 0 6px 26px">
+        <pre style="font-family:'Roboto Mono',monospace;font-size:13px;line-height:1.7;color:#dfe4de;background:#00253f;border-left:2px solid #B3A369;padding:18px 20px;margin:0;overflow-x:auto">sources_1/new/finite_state_machine_lock.sv     main module, 298 lines
+sim_1/new/finite_state_machine_lock_tb.sv      testbench
+constrs_1/new/constraints.xdc                  pin assignments</pre>
+      </div>
+    </details>
+  </div>
+
+  <div style="display:flex;gap:24px;align-items:center;font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding-top:8px">
+    <a href="https://github.com/Livingcolt1178/Finite-State-Machine-Lock" target="_blank" rel="noopener" style="text-decoration:none">Read the source →</a>
+    <a href="https://nicholasbramhall.weebly.com/portfolio.html" style="color:#8b9189;text-decoration:none">← Back to portfolio</a>
+  </div>
+</div>
+</div>
