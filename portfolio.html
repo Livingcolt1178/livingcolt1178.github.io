@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio — Nicholas Bramhall</title>
+<meta name="description" content="Four SystemVerilog hardware projects and one research paper, with how each build went and the specifications underneath.">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto+Slab:wght@400;500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="nav-band">
+    <div class="nav-inner">
+      <div class="nav-name">N. Bramhall <span>/ Computer Engineering</span></div>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="career-goals.html">Career Goals</a>
+      <a href="resume.html">Resume</a>
+      <a href="portfolio.html" aria-current="page">Portfolio</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+  <div style="max-width:1080px;margin:0 auto;padding:0 36px 90px">
+  
+    <div style="border-bottom:1px solid #23262a;padding:44px 0 34px">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#B3A369;margin-bottom:22px">Portfolio · five projects</div>
+      <h1 style="font-family:'Roboto Slab',serif;font-weight:500;font-size:44px;line-height:1.14;letter-spacing:-0.02em;color:#e8ebe6;margin:0 0 18px;max-width:24ch">Things I have built, and what each one taught me</h1>
+      <p style="font-size:18px;line-height:1.6;max-width:62ch;color:#9aa09a;margin:0">Four hardware projects in SystemVerilog and one research paper. Each page covers how the build went, then the specifications underneath.</p>
+    </div>
+  
+    <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:8px">1.0 — Hardware</div>
+      <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px">
+        <tbody>
+          <tr style="border-top:1px solid #23262a">
+            <td style="padding:20px 20px 20px 0;color:#B3A369;width:150px;vertical-align:top">RV32I-5S</td>
+            <td style="padding:20px 20px 20px 0;vertical-align:top">
+              <a href="riscv-cpu.html" style="font-family:'Roboto Slab',serif;font-size:19px;text-decoration:none">RISC-V CPU</a>
+              <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">A 5-stage pipelined RV32I core, compared against Spike at every retirement. Control and data hazards are resolved in hardware rather than papered over with NOPs.</div>
+            </td>
+            <td style="padding:20px 0;vertical-align:top;width:170px;color:#8b9189;line-height:1.9">34/37 instructions<br>CPI 1.31<br><span style="color:#c8ccc6">In development</span></td>
+          </tr>
+          <tr style="border-top:1px solid #23262a">
+            <td style="padding:20px 20px 20px 0;color:#B3A369;vertical-align:top">DSP-RAF-N</td>
+            <td style="padding:20px 20px 20px 0;vertical-align:top">
+              <a href="digital-signal-processing.html" style="font-family:'Roboto Slab',serif;font-size:19px;text-decoration:none">Rolling Average Filter</a>
+              <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">An ADC to DSP to DAC pipeline on a Spartan-7, filtering a live analog signal in real time. The measured rolloff at the 64-tap cutoff lands on −3 dB.</div>
+            </td>
+            <td style="padding:20px 0;vertical-align:top;color:#8b9189;line-height:1.9">368 LUTs · 0 DSP<br>21.6 kHz cutoff<br><span style="color:#5f8f5a">Hardware verified</span></td>
+          </tr>
+          <tr style="border-top:1px solid #23262a">
+            <td style="padding:20px 20px 20px 0;color:#B3A369;vertical-align:top">UART-8N1</td>
+            <td style="padding:20px 20px 20px 0;vertical-align:top">
+              <a href="uart-core.html" style="font-family:'Roboto Slab',serif;font-size:19px;text-decoration:none">UART Core</a>
+              <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">An 8N1 transmitter and receiver with no board tied to it, verified by a self-checking loopback testbench.</div>
+            </td>
+            <td style="padding:20px 0;vertical-align:top;color:#8b9189;line-height:1.9">Mid-bit sampling<br>MIT licensed<br><span style="color:#5f8f5a">Verified</span></td>
+          </tr>
+          <tr style="border-top:1px solid #23262a;border-bottom:1px solid #23262a">
+            <td style="padding:20px 20px 20px 0;color:#B3A369;vertical-align:top">FSM-LOCK-4</td>
+            <td style="padding:20px 20px 20px 0;vertical-align:top">
+              <a href="fsm-lock.html" style="font-family:'Roboto Slab',serif;font-size:19px;text-decoration:none">FSM Lock</a>
+              <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">A four-digit programmable lock on a Basys3. It passed every simulation and then failed on the board, which is how I learned what a synchronizer chain is for.</div>
+            </td>
+            <td style="padding:20px 0;vertical-align:top;color:#8b9189;line-height:1.9">10 states · 15 ms<br>0 latches<br><span style="color:#5f8f5a">Hardware tested</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <div style="padding:40px 0 34px">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:8px">2.0 — Research</div>
+      <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px">
+        <tbody>
+          <tr style="border-top:1px solid #23262a;border-bottom:1px solid #23262a">
+            <td style="padding:20px 20px 20px 0;color:#B3A369;width:150px;vertical-align:top">AP RESEARCH</td>
+            <td style="padding:20px 20px 20px 0;vertical-align:top">
+              <a href="ai-code-comparison.html" style="font-family:'Roboto Slab',serif;font-size:19px;text-decoration:none">AI Code Comparison</a>
+              <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">Seven AI tools measured on 42 generative and 15 refactoring problems in Java, scored on correctness, RAM, time to code, runtime, maintainability and accessibility.</div>
+            </td>
+            <td style="padding:20px 0;vertical-align:top;width:170px;color:#8b9189;line-height:1.9">7 tools · 57 problems<br><span style="color:#c8ccc6">Paper available</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <a href="mailto:nbramhall3@gatech.edu">nbramhall3@gatech.edu</a>
+      <a href="https://github.com/Livingcolt1178" target="_blank" rel="noopener">GitHub</a>
+      <a href="http://www.linkedin.com/in/nicholas-bramhall-1baa88389" target="_blank" rel="noopener">LinkedIn</a>
+      <span class="footer-note">Nicholas Bramhall · Georgia Tech</span>
+    </div>
+  </footer>
+</body>
+</html>

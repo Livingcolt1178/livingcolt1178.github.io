@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rolling Average Filter — Nicholas Bramhall</title>
+<meta name="description" content="An ADC to DSP to DAC pipeline on a Spartan-7, filtering a live analog signal and measured on a scope at the 21.6 kHz cutoff.">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto+Slab:wght@400;500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="nav-band">
+    <div class="nav-inner">
+      <div class="nav-name">N. Bramhall <span>/ Computer Engineering</span></div>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="career-goals.html">Career Goals</a>
+      <a href="resume.html">Resume</a>
+      <a href="portfolio.html" aria-current="page">Portfolio</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+  <div style="max-width:1080px;margin:0 auto;padding:0 36px 90px">
+  
+    <div style="border-bottom:1px solid #23262a;padding:44px 0 34px">
+      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#8b9189;margin-bottom:22px">
+        <span style="color:#B3A369">DSP-RAF-N</span><span style="color:#3a3e43">|</span>
+        <span>SystemVerilog</span><span style="color:#3a3e43">|</span>
+        <span>Spartan-7</span><span style="color:#3a3e43">|</span>
+        <span style="border:1px solid #3a3e43;padding:2px 8px;color:#c8ccc6">Hardware verified</span>
+      </div>
+      <h1 style="font-family:'Roboto Slab',serif;font-weight:500;font-size:44px;line-height:1.14;letter-spacing:-0.02em;color:#e8ebe6;margin:0 0 18px;max-width:22ch">Rolling Average Filter: Digital Signal Processing Project</h1>
+      <p style="font-size:18px;line-height:1.6;max-width:62ch;color:#9aa09a;margin:0 0 26px">An ADC to DSP to DAC pipeline on a Spartan-7, filtering a live analog signal in real time and measured on a scope.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a href="https://github.com/Livingcolt1178/Rolling-Average-Filter-DSP" target="_blank" rel="noopener" style="font-family:'Roboto Mono',monospace;border:1px solid #B3A369;color:#B3A369;padding:10px 16px;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none">View repository →</a>
+        <a href="#dsp-spec" style="font-family:'Roboto Mono',monospace;border:1px solid #3a3e43;color:#c8ccc6;padding:10px 16px;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none">Specifications</a>
+      </div>
+    </div>
+  
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #23262a">
+      <div style="padding:22px 20px 22px 0">
+        <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8b9189;margin-bottom:10px">LUTs · 5% of XC7S15</div>
+        <div style="font-family:'Roboto Slab',serif;font-weight:500;font-size:30px;line-height:1;color:#B3A369">368</div>
+      </div>
+      <div style="padding:22px 20px;border-left:1px solid #23262a">
+        <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8b9189;margin-bottom:10px">DSP slices used</div>
+        <div style="font-family:'Roboto Slab',serif;font-weight:500;font-size:30px;line-height:1;color:#B3A369">0</div>
+      </div>
+      <div style="padding:22px 20px;border-left:1px solid #23262a">
+        <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8b9189;margin-bottom:10px">Worst negative slack</div>
+        <div style="font-family:'Roboto Slab',serif;font-weight:500;font-size:30px;line-height:1;color:#B3A369">6.57 ns</div>
+      </div>
+      <div style="padding:22px 0 22px 20px;border-left:1px solid #23262a">
+        <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8b9189;margin-bottom:10px">Cutoff at 64 taps</div>
+        <div style="font-family:'Roboto Slab',serif;font-weight:500;font-size:30px;line-height:1;color:#B3A369">21.6 kHz</div>
+      </div>
+    </div>
+  
+    <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">1.0 — Overview</div>
+      <p style="font-size:16px;line-height:1.72;max-width:74ch;margin:0 0 16px">The goal of this project was to teach me how to use the Spartan accelerator board and the basics of digital signal processing. Throughout this process I was mentored and guided by my older brother who has graduated with a master's in Computer Engineering from NC State. But all work is my own, not skipping any parts as the whole goal of this was to learn and demonstrate understanding.</p>
+      <p style="font-size:16px;line-height:1.72;max-width:74ch;margin:0 0 16px">Before doing any code we started with an overview and a basic guideline planned out in Google Drawings. After that I worked on the ADC1173_controller and moved progressively across, from the ADC controller to the rolling filter to the DAC controller. Along the way I would commit and push and then my brother would review and explain why something isn't as optimal or secure as something else in a pull request, for example, switching from a circular buffer in the ADC1173_controller to a FIFO buffer. For better understanding of the dialogue, check the pull request history in the GitHub repository.</p>
+      <p style="font-size:16px;line-height:1.72;max-width:74ch;margin:0 0 24px">In addition, after every module, I would design and implement a test bench for that individual module to make sure it works as functions. Finally I joined together 2 signals in series for a mixed AC signal, connected that to the FPGA, ran the signal from the waveform generator through it and into an oscilloscope and it works as intended as shown at the end.</p>
+      <figure style="margin:0">
+        <img src="assets/schematic.png" alt="Block diagram of the ADC to filter to DAC pipeline" style="width:100%;display:block;border:1px solid #23262a">
+        <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">The signal chain: ADC1173 capture into a FIFO, the N-tap filter, then SPI out to the DAC7311.</figcaption>
+      </figure>
+    </div>
+  
+    <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">2.0 — ADC1173_Controller</div>
+      <p style="font-size:16px;line-height:1.72;max-width:74ch;margin:0 0 16px">The ADC works as follows. A sample strobe running on a simple counter fires every 16 cycles, letting the ADC sample whatever signal is coming in (see Figure 1). The reason for the 16 cycles is because the DAC requires 16 to output and thus sampling any faster than that is unnecessary and can cause problem during testing. Additionally due to the Nyquist–Shannon sampling theorem, the fact that some signals are being skipped is okay or rather, intentional.</p>
+      <p style="font-size:16px;line-height:1.72;max-width:74ch;margin:0 0 24px">From there the data comes into a First In First Out buffer (FIFO buffer), that works by having two different addresses, a write and a read that 'chase' each other. Additionally there is a counter that keeps track of how many datasets are stored in the buffer and that keeps the FIFO safe in that if there is no data stored, it does not send any to the filter, and if the buffer it does not write the buffer. This keeps the addresses in line and prevents any skipping or causes them to get out of sync, see Figure 2 for the FIFO Buffer code.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <figure style="margin:0">
+          <img src="https://nicholasbramhall.weebly.com/uploads/1/5/5/2/155209805/screenshot-2026-04-10-080739_orig.png" alt="ADC sample strobe code" style="width:100%;display:block;border:1px solid #23262a">
+          <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">Figure 1 · ADC sample strobe</figcaption>
+        </figure>
+        <figure style="margin:0">
+          <img src="https://nicholasbramhall.weebly.com/uploads/1/5/5/2/155209805/screenshot-2026-04-10-080900_orig.png" alt="ADC FIFO buffer code" style="width:100%;display:block;border:1px solid #23262a">
+          <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">Figure 2 · ADC FIFO buffer</figcaption>
+        </figure>
+      </div>
+    </div>
+  
+    <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">3.0 — Rolling Average Filter</div>
+      <p style="font-size:16px;line-height:1.72;max-width:74ch;margin:0 0 16px">The Filter is by far the simplest part of this ironically. First, it performs a handshake with the ADC letting it know that it needs data, and that the data from the ADC is valid. Then with the data from the ADC it shifts it upward in an array to make room for data coming in every cycle, and the new data overwrites the old after that data is 4 cycles old (see Figure 3). During this, through combinational logic it constantly adds up all the data into a sum, bit shifts it twice to the left to divide it by 4 to take the average and remove any noise.</p>
+      <p style="font-size:16px;line-height:1.72;max-width:74ch;margin:0 0 24px">Finally in a flip flop it bit shifts it by 4 to prepare the data for the DAC as it requires 12 bits (see Figure 4). Through keeping the data output in a FF we create a timing lock that ensures that no half calculated data is passed through to the DAC, this is part of the handshake with the DAC in order to let it know that the data is valid. The pictures below is for the 4-tap filter model, later I will show the 16-tap and 64-tap filter model and explain the difference and why it's an improvement.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <figure style="margin:0">
+          <img src="https://nicholasbramhall.weebly.com/uploads/1/5/5/2/155209805/screenshot-2026-04-10-081453_orig.png" alt="4-tap filter sample handling code" style="width:100%;display:block;border:1px solid #23262a">
+          <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">Figure 3 · 4-tap filter sample handling</figcaption>
+        </figure>
+        <figure style="margin:0">
+          <img src="https://nicholasbramhall.weebly.com/uploads/1/5/5/2/155209805/screenshot-2026-04-10-081502_orig.png" alt="4-tap filter calculation code" style="width:100%;display:block;border:1px solid #23262a">
+          <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">Figure 4 · 4-tap filter calculations</figcaption>
+        </figure>
+      </div>
+    </div>
+  
+    <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">4.0 — DAC7311 Controller</div>
+      <p style="font-size:16px;line-height:1.72;max-width:74ch;margin:0 0 24px">The DAC is probably the most complex due to how it has to output values. First the data comes in through a handshake in that it accepts data if the DAC is not busy. This data is prepared in a variable data_reg in which it has 1 0 bit in front of the data from the filter and 2 1 bits as don't cares that signal the end of the cycle. Then as the sync goes down signifying that the DAC is busy, it also sends a 0 bit to the DAC. The reason for why we're sending 2 0 bits before the data is because those are control bits that let the DAC know we want to normal operation. Afterwards we simply cycle through data_reg, sending whatever the MSB in the reg is and then bit shifting for the next cycle. This continues for 16 cycles where sync returns to high and the DAC is ready for more data, see Figure 5 for DAC controller code.</p>
+      <figure style="margin:0;max-width:640px">
+        <img src="https://nicholasbramhall.weebly.com/uploads/1/5/5/2/155209805/screenshot-2026-04-10-081932_orig.png" alt="DAC controller code" style="width:100%;display:block;border:1px solid #23262a">
+        <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">Figure 5 · DAC code</figcaption>
+      </figure>
+    </div>
+  
+    <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">5.0 — Results, 4-tap filter</div>
+      <p style="font-size:16px;line-height:1.72;max-width:74ch;margin:0 0 24px">With all this done, the only thing left to do is in person testing. The testing went as this: make a circuit that combines 2 AC signal, one 'noisy' higher signal, and one base signal (see Figure 6). Connect the signals to the FPGA. Then we should see the output signal appears smoother than the input, the frequency should match the base signal, and as you'll see in Figure 7, that is the case. Additionally as we increase the frequency of the higher signal, it will 'fade out' of the output signal and should start to become a 1-1 match to the input signal. The cutoff frequency (calculated from the sampling rate of the ADC1173 and number of taps) is around 346 kHz.</p>
+  
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px">
+        <div style="border-left:2px solid #B3A369;padding:2px 0 2px 18px">
+          <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#B3A369;margin-bottom:10px">Problems</div>
+          <p style="font-size:15px;line-height:1.68;margin:0">Now you'll notice in Figure 7, the output signal (green) is doing something called stepping, additionally can still see the jaggedness from noisy signal, this is due to the low number of taps. Thus a simple improvement we can do is increase the taps. Thus from here I improved the design.</p>
+        </div>
+        <div style="border-left:2px solid #B3A369;padding:2px 0 2px 18px">
+          <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#B3A369;margin-bottom:10px">Improvements</div>
+          <p style="font-size:15px;line-height:1.68;margin:0">I upgraded the design at first to a 16 tap version, then a 64 tap version, then an N tap version so that by changing a single variable you can decide the number of taps. According to the cutoff frequency formula, you can see that it scales inversely with N meaning the as N increases the cutoff frequency decreases linearly. Going from 346 kHz at 4 taps down to a tested 21.6 kHz at 64 taps.</p>
+        </div>
+      </div>
+  
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <figure style="margin:0">
+          <img src="https://nicholasbramhall.weebly.com/uploads/1/5/5/2/155209805/screenshot-2026-04-13-172056_orig.png" alt="N-tap filter sample handling code" style="width:100%;display:block;border:1px solid #23262a">
+          <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">Figure 9 · N-tap filter sample handling</figcaption>
+        </figure>
+        <figure style="margin:0">
+          <img src="https://nicholasbramhall.weebly.com/uploads/1/5/5/2/155209805/screenshot-2026-04-13-172113_orig.png" alt="N-tap filter calculation code" style="width:100%;display:block;border:1px solid #23262a">
+          <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">Figure 10 · N-tap filter calculations</figcaption>
+        </figure>
+        <figure style="margin:0">
+          <img src="https://nicholasbramhall.weebly.com/uploads/1/5/5/2/155209805/5khz-64-tap_orig.jpg" alt="Oscilloscope trace, 64-tap filter with a 5 kHz noise signal" style="width:100%;display:block;border:1px solid #23262a">
+          <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">Figure 11 · 64-tap, input yellow, output green. Signal 1 = 1 kHz, signal 2 = 5 kHz.</figcaption>
+        </figure>
+        <figure style="margin:0">
+          <img src="assets/22khz-64-tap.webp" alt="Oscilloscope trace, 64-tap filter at the 22 kHz cutoff" style="width:100%;display:block;border:1px solid #23262a">
+          <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">Figure 12 · 64-tap at the cutoff. Output measures roughly 0.707× the input, which is −3 dB.</figcaption>
+        </figure>
+      </div>
+    </div>
+  
+    <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">6.0 — Conclusion</div>
+      <p style="font-size:16px;line-height:1.72;max-width:74ch;margin:0 0 24px">As shown in the photos above the attunement to the yellow signal is significantly greater, additionally you can see that voltage drop is around 67% which corresponds with −3 dB, exactly the result expected. Furthermore as the design is now N type it is highly customizable to the user and even increase even more. The maximum viable N count is unknown to me, as that would require further testing that doesn't so much contribute to my understanding and learning from this project. Thank you for taking time to join me on this journey!</p>
+      <figure style="margin:0">
+        <div class="nb-slot" style="width:100%;height:320px">Photo goes here: FPGA, waveform generator and oscilloscope on the bench.</div>
+        <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">Figure 6 · The physical circuit and connections.</figcaption>
+      </figure>
+    </div>
+  
+    <div id="dsp-spec" style="padding:40px 0 34px">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">7.0 — Specifications</div>
+  
+      <details style="border-top:1px solid #23262a;padding:16px 0">
+        <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>7.1 Modules</summary>
+        <div style="padding:16px 0 6px 26px">
+          <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px">
+            <tbody>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:10px 20px 10px 0;color:#B3A369;vertical-align:top;width:200px">ADC1173_Controller</td><td style="padding:10px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6;color:#9aa09a">Captures 8-bit parallel samples every 16 clock cycles into an 8-entry FIFO. Drives ADC_clk and ADC_en_n.</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:10px 20px 10px 0;color:#B3A369;vertical-align:top">rollingAverageFilter</td><td style="padding:10px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6;color:#9aa09a">Shift register of N samples, running sum, 12-bit average scaled to the DAC's range.</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:10px 20px 10px 0;color:#B3A369;vertical-align:top">DAC7311_Controller</td><td style="padding:10px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6;color:#9aa09a">Three-state FSM. Serializes a 16-bit SPI frame MSB first with SYNC framing at 50 MHz.</td></tr>
+              <tr><td style="padding:10px 20px 10px 0;color:#B3A369;vertical-align:top">top_lvl</td><td style="padding:10px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6;color:#9aa09a">Wires the submodules, divides the 100 MHz oscillator to 50 MHz, gates reset with the PLL lock.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+  
+      <details style="border-top:1px solid #23262a;padding:16px 0">
+        <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>7.2 Tap count and cutoff frequency</summary>
+        <div style="padding:16px 0 6px 26px">
+          <pre style="font-family:'Roboto Mono',monospace;font-size:12px;color:#dfe4de;background:#00253f;border-left:2px solid #B3A369;padding:12px 14px;margin:0 0 16px;overflow-x:auto">y[n] = (1/N) × Σ x[n-k]        f_c = 0.443 × f_sample / N</pre>
+          <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px;max-width:520px">
+            <thead><tr style="border-bottom:1px solid #23262a"><th style="text-align:left;padding:8px 0;font-weight:400;color:#8b9189;letter-spacing:0.1em;font-size:11px;text-transform:uppercase">Taps</th><th style="text-align:left;padding:8px 0;font-weight:400;color:#8b9189;letter-spacing:0.1em;font-size:11px;text-transform:uppercase">Sample rate</th><th style="text-align:left;padding:8px 0;font-weight:400;color:#8b9189;letter-spacing:0.1em;font-size:11px;text-transform:uppercase">Cutoff</th></tr></thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#c8ccc6">4</td><td style="padding:9px 0;color:#c8ccc6">3.125 MHz</td><td style="padding:9px 0;color:#c8ccc6">~346 kHz</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#c8ccc6">8</td><td style="padding:9px 0;color:#c8ccc6">3.125 MHz</td><td style="padding:9px 0;color:#c8ccc6">~173 kHz</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#c8ccc6">16</td><td style="padding:9px 0;color:#c8ccc6">3.125 MHz</td><td style="padding:9px 0;color:#c8ccc6">~86 kHz</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#c8ccc6">32</td><td style="padding:9px 0;color:#c8ccc6">3.125 MHz</td><td style="padding:9px 0;color:#c8ccc6">~43 kHz</td></tr>
+              <tr><td style="padding:9px 0;color:#B3A369">64</td><td style="padding:9px 0;color:#B3A369">3.125 MHz</td><td style="padding:9px 0;color:#B3A369">~21.6 kHz</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+  
+      <details style="border-top:1px solid #23262a;padding:16px 0">
+        <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>7.3 Utilization and timing, 64-tap build</summary>
+        <div style="padding:16px 0 6px 26px">
+          <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px;max-width:660px">
+            <tbody>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">LUTs</td><td style="padding:9px 0;color:#c8ccc6">368 · 5%</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Flip-flops</td><td style="padding:9px 0;color:#c8ccc6">629 · 4%</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">DSP slices</td><td style="padding:9px 0;color:#c8ccc6">0 · built in fabric logic on purpose</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">I/O pins</td><td style="padding:9px 0;color:#c8ccc6">15 · 15%</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Worst negative slack</td><td style="padding:9px 0;color:#c8ccc6">6.574 ns on a 20 ns period</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Effective sample rate</td><td style="padding:9px 0;color:#c8ccc6">3.125 MSPS</td></tr>
+              <tr><td style="padding:9px 0;color:#8b9189">Pipeline latency</td><td style="padding:9px 0;color:#c8ccc6">~23.04 µs at N = 64</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:15px;line-height:1.72;color:#9aa09a;margin:16px 0 0;max-width:74ch">Going from 4 to 64 taps raised flip-flop use linearly for the shift register but barely moved LUT count for the accumulator. The design is flip-flop limited, so the fabric ceiling is somewhere near 2,000 taps.</p>
+        </div>
+      </details>
+  
+      <details style="border-top:1px solid #23262a;padding:16px 0">
+        <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>7.4 Assertions in the top-level testbench</summary>
+        <div style="padding:16px 0 6px 26px">
+          <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px">
+            <tbody>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 20px 9px 0;color:#B3A369;width:230px">ADC_Write_Check</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">FIFO write data matches the ADC input</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 20px 9px 0;color:#B3A369">ADC_Read_Check</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">FIFO read data matches the stored sample</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 20px 9px 0;color:#B3A369">filter_calculation_check</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">Filter output matches the expected rolling average</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 20px 9px 0;color:#B3A369">DAC_sync_check</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">SYNC drops one cycle after valid data</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 20px 9px 0;color:#B3A369">DAC_start_bit_check</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">The first transmitted bit is correct</td></tr>
+              <tr><td style="padding:9px 20px 9px 0;color:#B3A369">DAC_shift_reg_check</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">The shift register advances each cycle</td></tr>
+            </tbody>
+          </table>
+          <figure style="margin:20px 0 0">
+            <img src="assets/dsp-waveform.png" alt="Simulation waveform of the full pipeline" style="width:100%;display:block;border:1px solid #23262a">
+            <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">The full run, bottom to top: ADC capture into the FIFO, filtering, then serialization to the DAC.</figcaption>
+          </figure>
+        </div>
+      </details>
+  
+      <details style="border-top:1px solid #23262a;border-bottom:1px solid #23262a;padding:16px 0">
+        <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>7.5 Hardware and pin assignments</summary>
+        <div style="padding:16px 0 6px 26px">
+          <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px;max-width:720px">
+            <tbody>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 20px 9px 0;color:#8b9189;width:200px">FPGA board</td><td style="padding:9px 0;color:#c8ccc6">Spartan Edge Accelerator, XC7S15-1FTGB196C</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 20px 9px 0;color:#8b9189">ADC</td><td style="padding:9px 0;color:#c8ccc6">ADC1173, 8-bit parallel, onboard</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 20px 9px 0;color:#8b9189">DAC</td><td style="padding:9px 0;color:#c8ccc6">DAC7311IDCKR, 12-bit SPI, onboard</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 20px 9px 0;color:#8b9189">Oscilloscope</td><td style="padding:9px 0;color:#c8ccc6">Keysight DSOX3014A</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 20px 9px 0;color:#8b9189">Waveform generator</td><td style="padding:9px 0;color:#c8ccc6">Keysight 33500B</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 20px 9px 0;color:#8b9189">ADC_Din[7:0]</td><td style="padding:9px 0;color:#c8ccc6">H12 / H11 / C11 / F12 / E12 / D12 / J2 / J3</td></tr>
+              <tr><td style="padding:9px 20px 9px 0;color:#8b9189">DAC_Dout · sync_n · clk</td><td style="padding:9px 0;color:#c8ccc6">L1 · N1 · M1</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  
+    <div style="display:flex;gap:24px;align-items:center;font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding-top:8px">
+      <a href="https://github.com/Livingcolt1178/Rolling-Average-Filter-DSP" target="_blank" rel="noopener" style="text-decoration:none">Read the source →</a>
+      <a href="portfolio.html" style="color:#8b9189;text-decoration:none">← Back to portfolio</a>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <a href="mailto:nbramhall3@gatech.edu">nbramhall3@gatech.edu</a>
+      <a href="https://github.com/Livingcolt1178" target="_blank" rel="noopener">GitHub</a>
+      <a href="http://www.linkedin.com/in/nicholas-bramhall-1baa88389" target="_blank" rel="noopener">LinkedIn</a>
+      <span class="footer-note">Nicholas Bramhall · Georgia Tech</span>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UART Core — Nicholas Bramhall</title>
+<meta name="description" content="An 8N1 transmitter and receiver with no board tied to it, verified by a self-checking loopback testbench.">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto+Slab:wght@400;500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="nav-band">
+    <div class="nav-inner">
+      <div class="nav-name">N. Bramhall <span>/ Computer Engineering</span></div>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="career-goals.html">Career Goals</a>
+      <a href="resume.html">Resume</a>
+      <a href="portfolio.html" aria-current="page">Portfolio</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+  <div style="max-width:1080px;margin:0 auto;padding:0 36px 90px">
+  
+    <div style="border-bottom:1px solid #23262a;padding:44px 0 34px">
+      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#8b9189;margin-bottom:22px">
+        <span style="color:#B3A369">UART-8N1</span><span style="color:#3a3e43">|</span>
+        <span>SystemVerilog</span><span style="color:#3a3e43">|</span>
+        <span>Hardware independent</span><span style="color:#3a3e43">|</span>
+        <span style="border:1px solid #3a3e43;padding:2px 8px;color:#c8ccc6">MIT licensed</span>
+      </div>
+      <h1 style="font-family:'Roboto Slab',serif;font-weight:500;font-size:44px;line-height:1.14;letter-spacing:-0.02em;color:#e8ebe6;margin:0 0 18px;max-width:21ch">A UART core built to be dropped into somebody else's design</h1>
+      <p style="font-size:18px;line-height:1.6;max-width:62ch;color:#9aa09a;margin:0 0 26px">An 8N1 transmitter and receiver with no board tied to it. Clock frequency and baud rate are parameters, every signal is a port, and the repository ships no constraints file on purpose.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a href="https://github.com/Livingcolt1178/simple-UART" target="_blank" rel="noopener" style="font-family:'Roboto Mono',monospace;border:1px solid #B3A369;color:#B3A369;padding:10px 16px;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none">View repository →</a>
+        <a href="#uart-spec" style="font-family:'Roboto Mono',monospace;border:1px solid #3a3e43;color:#c8ccc6;padding:10px 16px;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none">Port map</a>
+      </div>
+    </div>
+  
+    <div style="display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid #23262a;font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:0.06em">
+      <div style="padding:16px 24px 16px 0;color:#8b9189">FORMAT <span style="color:#c8ccc6">8N1, LSB first</span></div>
+      <div style="padding:16px 24px;border-left:1px solid #23262a;color:#8b9189">BIT PERIOD <span style="color:#c8ccc6">CLK_FREQ / BAUD_RATE</span></div>
+      <div style="padding:16px 24px;border-left:1px solid #23262a;color:#8b9189">SAMPLING <span style="color:#c8ccc6">mid-bit, T/2</span></div>
+      <div style="padding:16px 0 16px 24px;border-left:1px solid #23262a;color:#8b9189">VERIFIED AT <span style="color:#c8ccc6">100 MHz · 9600 baud</span></div>
+    </div>
+  
+    <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">1.0 — How it went</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-bottom:28px">
+        <div>
+          <p style="font-size:16px;line-height:1.72;margin:0 0 16px">Most UART examples I found were written against one board, with pin assignments baked into the source. That makes them hard to reuse. I wrote this one as a core instead: clock frequency and baud rate have no defaults and must be set at instantiation, so the compiler complains if you forget, and the repository deliberately contains no constraints file. Whoever uses it maps the pins for their own board.</p>
+          <p style="font-size:16px;line-height:1.72;margin:0">The line idles high. A falling edge starts a frame, eight data bits follow LSB first, and a stop bit returns the line to idle. On the receive side the incoming line is double-registered before anything looks at it, because it arrives from a different clock domain and a metastable flop will otherwise decide the value of a bit.</p>
+        </div>
+        <div>
+          <p style="font-size:16px;line-height:1.72;margin:0 0 16px">The receiver waits for the start bit's falling edge and then samples each bit in the middle of its period rather than at the edge, which buys the most timing margin against a baud rate that never divides evenly into the clock. That single choice is the difference between a link that works and one that corrupts a byte every few hundred frames.</p>
+          <p style="font-size:16px;line-height:1.72;margin:0">The data_ready input needs a single-cycle pulse. A raw button press lasts millions of clock cycles at 100 MHz and would fire frame after frame, so the documentation says plainly that it has to be debounced and edge-detected upstream. Writing that down was part of the exercise: the core is only reusable if the assumptions it makes are visible.</p>
+        </div>
+      </div>
+      <figure style="margin:0">
+        <img src="assets/uart-frame.png" alt="UART frame timing diagram" style="width:100%;display:block;border:1px solid #23262a">
+        <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">One 8N1 frame: idle high, start bit low, eight data bits LSB first, stop bit high.</figcaption>
+      </figure>
+    </div>
+  
+    <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">2.0 — Verified by loopback</div>
+      <p style="font-size:16px;line-height:1.72;max-width:74ch;margin:0 0 24px">The testbench wires the sender's Tx straight to the receiver's Rx, so every byte travels the full serialize and deserialize path and is compared against what was sent. It runs at 100 MHz and 9600 baud in Vivado xsim, reaches the end of the run at about 22.4 ms of simulated time, and reports no errors. The sources also compile clean under the strict slang SystemVerilog compiler.</p>
+      <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px;margin-bottom:28px">
+        <tbody>
+          <tr style="border-top:1px solid #23262a"><td style="padding:12px 20px 12px 0;color:#B3A369;width:60px;vertical-align:top">T1</td><td style="padding:12px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6">Every register in both modules checked at its reset value, with Tx idling high.</td></tr>
+          <tr style="border-top:1px solid #23262a"><td style="padding:12px 20px 12px 0;color:#B3A369;vertical-align:top">T2</td><td style="padding:12px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6">Directed patterns: 0x00, 0xAA, 0xFF and a mixed byte.</td></tr>
+          <tr style="border-top:1px solid #23262a"><td style="padding:12px 20px 12px 0;color:#B3A369;vertical-align:top">T3</td><td style="padding:12px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6">Reset asserted halfway through a frame, then a check that the next byte still transfers.</td></tr>
+          <tr style="border-top:1px solid #23262a;border-bottom:1px solid #23262a"><td style="padding:12px 20px 12px 0;color:#B3A369;vertical-align:top">T4</td><td style="padding:12px 0;font-family:Roboto,sans-serif;font-size:15px;line-height:1.6">Sixteen random bytes, each compared at the receiver output.</td></tr>
+        </tbody>
+      </table>
+      <figure style="margin:0">
+        <img src="assets/uart-waveform.png" alt="Simulation waveform showing transmitted and received bytes" style="width:100%;display:block;border:1px solid #23262a">
+        <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">Data latched on data_ready, serialized onto Tx, and appearing on dout one frame later.</figcaption>
+      </figure>
+    </div>
+  
+    <div id="uart-spec" style="padding:40px 0 34px">
+      <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">3.0 — Specifications</div>
+  
+      <details style="border-top:1px solid #23262a;padding:16px 0">
+        <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>3.1 UART_sender ports</summary>
+        <div style="padding:16px 0 6px 26px">
+          <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px">
+            <thead><tr style="border-bottom:1px solid #23262a"><th style="text-align:left;padding:8px 16px 8px 0;font-weight:400;color:#8b9189;letter-spacing:0.1em;font-size:11px;text-transform:uppercase;width:130px">Port</th><th style="text-align:left;padding:8px 16px 8px 0;font-weight:400;color:#8b9189;letter-spacing:0.1em;font-size:11px;text-transform:uppercase;width:60px">Dir</th><th style="text-align:left;padding:8px 16px 8px 0;font-weight:400;color:#8b9189;letter-spacing:0.1em;font-size:11px;text-transform:uppercase;width:60px">Width</th><th style="text-align:left;padding:8px 0;font-weight:400;color:#8b9189;letter-spacing:0.1em;font-size:11px;text-transform:uppercase">Description</th></tr></thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 16px 9px 0;color:#B3A369">clk</td><td style="padding:9px 16px 9px 0;color:#8b9189">in</td><td style="padding:9px 16px 9px 0;color:#8b9189">1</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">System clock</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 16px 9px 0;color:#B3A369">rst_n</td><td style="padding:9px 16px 9px 0;color:#8b9189">in</td><td style="padding:9px 16px 9px 0;color:#8b9189">1</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">Active-low synchronous reset</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 16px 9px 0;color:#B3A369">data</td><td style="padding:9px 16px 9px 0;color:#8b9189">in</td><td style="padding:9px 16px 9px 0;color:#8b9189">8</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">Byte to transmit</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 16px 9px 0;color:#B3A369">data_ready</td><td style="padding:9px 16px 9px 0;color:#8b9189">in</td><td style="padding:9px 16px 9px 0;color:#8b9189">1</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">One-clock pulse to latch data and start; ignored while busy</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 16px 9px 0;color:#B3A369">Tx</td><td style="padding:9px 16px 9px 0;color:#8b9189">out</td><td style="padding:9px 16px 9px 0;color:#8b9189">1</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">Serial output line</td></tr>
+              <tr><td style="padding:9px 16px 9px 0;color:#B3A369">busy</td><td style="padding:9px 16px 9px 0;color:#8b9189">out</td><td style="padding:9px 16px 9px 0;color:#8b9189">1</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">High while a frame is transmitting</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+  
+      <details style="border-top:1px solid #23262a;padding:16px 0">
+        <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>3.2 UART_receiver ports</summary>
+        <div style="padding:16px 0 6px 26px">
+          <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px">
+            <thead><tr style="border-bottom:1px solid #23262a"><th style="text-align:left;padding:8px 16px 8px 0;font-weight:400;color:#8b9189;letter-spacing:0.1em;font-size:11px;text-transform:uppercase;width:130px">Port</th><th style="text-align:left;padding:8px 16px 8px 0;font-weight:400;color:#8b9189;letter-spacing:0.1em;font-size:11px;text-transform:uppercase;width:60px">Dir</th><th style="text-align:left;padding:8px 16px 8px 0;font-weight:400;color:#8b9189;letter-spacing:0.1em;font-size:11px;text-transform:uppercase;width:60px">Width</th><th style="text-align:left;padding:8px 0;font-weight:400;color:#8b9189;letter-spacing:0.1em;font-size:11px;text-transform:uppercase">Description</th></tr></thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 16px 9px 0;color:#B3A369">clk</td><td style="padding:9px 16px 9px 0;color:#8b9189">in</td><td style="padding:9px 16px 9px 0;color:#8b9189">1</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">System clock</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 16px 9px 0;color:#B3A369">rst_n</td><td style="padding:9px 16px 9px 0;color:#8b9189">in</td><td style="padding:9px 16px 9px 0;color:#8b9189">1</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">Active-low synchronous reset</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 16px 9px 0;color:#B3A369">Rx</td><td style="padding:9px 16px 9px 0;color:#8b9189">in</td><td style="padding:9px 16px 9px 0;color:#8b9189">1</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">Serial input, double-registered internally for metastability</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 16px 9px 0;color:#B3A369">dout</td><td style="padding:9px 16px 9px 0;color:#8b9189">out</td><td style="padding:9px 16px 9px 0;color:#8b9189">8</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">Last received byte, updated at the end of each frame</td></tr>
+              <tr><td style="padding:9px 16px 9px 0;color:#B3A369">data_valid</td><td style="padding:9px 16px 9px 0;color:#8b9189">out</td><td style="padding:9px 16px 9px 0;color:#8b9189">1</td><td style="padding:9px 0;font-family:Roboto,sans-serif;font-size:15px;color:#9aa09a">Pulses high for one clock when a new byte lands</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+  
+      <details style="border-top:1px solid #23262a;padding:16px 0">
+        <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>3.3 Instantiating the core</summary>
+        <div style="padding:16px 0 6px 26px">
+          <pre style="font-family:'Roboto Mono',monospace;font-size:13px;line-height:1.7;color:#dfe4de;background:#00253f;border-left:2px solid #B3A369;padding:18px 20px;margin:0;overflow-x:auto">UART_sender #(.BAUD_RATE(115200), .CLK_FREQ(100_000_000)) u_tx (
+    .clk(clk), .rst_n(rst_n),
+    .data(data), .data_ready(data_ready),
+    .Tx(uart_tx_pin), .busy(tx_busy)
+  );
+  
+  UART_receiver #(.BAUD_RATE(115200), .CLK_FREQ(100_000_000)) u_rx (
+    .clk(clk), .rst_n(rst_n),
+    .Rx(uart_rx_pin), .dout(rx_byte), .data_valid(rx_valid)
+  );</pre>
+        </div>
+      </details>
+  
+      <details style="border-top:1px solid #23262a;border-bottom:1px solid #23262a;padding:16px 0">
+        <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>3.4 Limitations</summary>
+        <div style="padding:16px 0 6px 26px;font-size:15px;line-height:1.72;max-width:74ch;color:#9aa09a">
+          <p style="margin:0">The frame format is fixed at 8N1, with no parity bit and no configurable stop bits. The receiver takes one sample at mid-bit rather than oversampling at 16× with majority voting, which is the usual next step for noisy lines.</p>
+        </div>
+      </details>
+    </div>
+  
+    <div style="display:flex;gap:24px;align-items:center;font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding-top:8px">
+      <a href="https://github.com/Livingcolt1178/simple-UART" target="_blank" rel="noopener" style="text-decoration:none">Read the source →</a>
+      <a href="portfolio.html" style="color:#8b9189;text-decoration:none">← Back to portfolio</a>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <a href="mailto:nbramhall3@gatech.edu">nbramhall3@gatech.edu</a>
+      <a href="https://github.com/Livingcolt1178" target="_blank" rel="noopener">GitHub</a>
+      <a href="http://www.linkedin.com/in/nicholas-bramhall-1baa88389" target="_blank" rel="noopener">LinkedIn</a>
+      <span class="footer-note">Nicholas Bramhall · Georgia Tech</span>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,126 @@
+/* GT Datasheet — shared stylesheet. See theme.md for the full spec. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: #0c0d0f;
+  color: #b6bcb5;
+  font-family: Roboto, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2 {
+  font-family: 'Roboto Slab', Georgia, serif;
+  font-weight: 500;
+  color: #e8ebe6;
+}
+
+p { margin: 0 0 8px; }
+
+a { color: #B3A369; text-underline-offset: 3px; }
+a:hover { color: #cdbe8c; }
+
+img { display: block; max-width: 100%; height: auto; }
+figure { margin: 0; }
+table { background: none; }
+th, td { background: none; }
+
+pre {
+  white-space: pre;
+  tab-size: 4;
+  font-family: 'Roboto Mono', ui-monospace, Menlo, monospace;
+}
+
+:focus-visible { outline: 2px solid #B3A369; outline-offset: 2px; }
+::selection { background: rgba(179, 163, 105, .3); }
+
+/* Navigation band */
+
+.nav-band { background: #003057; }
+
+.nav-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 15px 36px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.nav-name { color: #fff; margin-right: auto; }
+.nav-name span { color: #7fa3bd; }
+.nav-inner a { color: #c9d6e0; text-decoration: none; }
+.nav-inner a:hover { color: #fff; }
+.nav-inner a[aria-current="page"] { color: #B3A369; }
+
+.nav-toggle { display: none; }
+
+/* Collapsible spec blocks */
+
+summary { list-style: none; cursor: pointer; }
+summary::-webkit-details-marker { display: none; }
+summary::marker { content: ""; }
+details > summary > span[data-plus]::after { content: "+"; }
+details[open] > summary > span[data-plus]::after { content: "\2212"; }
+
+/* Image placeholders awaiting real photos */
+
+.nb-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 1px dashed #3a3e43;
+  background: #111316;
+  color: #6e746d;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  padding: 24px;
+}
+
+/* Footer */
+
+.site-footer {
+  border-top: 1px solid #23262a;
+  margin-top: 40px;
+}
+
+.footer-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 26px 36px 40px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.footer-inner a { text-decoration: none; }
+.footer-inner .footer-note { color: #6e746d; margin-left: auto; }
+
+@media (max-width: 760px) {
+  h1 { font-size: 30px !important; }
+  .nav-inner { gap: 16px; font-size: 11px; }
+  [style*="repeat(4,1fr)"] { grid-template-columns: 1fr 1fr !important; }
+  [style*="grid-template-columns:1fr 1fr;gap:36px"],
+  [style*="grid-template-columns:1fr 1fr;gap:40px"],
+  [style*="grid-template-columns:1fr 1fr;gap:20px"],
+  [style*="grid-template-columns:1fr 300px"] { grid-template-columns: 1fr !important; }
+  table, tbody, tr, td { display: block; width: 100%; }
+  td { padding-left: 0 !important; }
+}
