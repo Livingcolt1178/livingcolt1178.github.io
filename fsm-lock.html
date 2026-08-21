@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FSM Lock — Nicholas Bramhall</title>
-<meta name="description" content="A four-digit programmable lock on a Basys3, and what metastability does to a design that only ever ran in simulation.">
+<meta name="description" content="A four-digit programmable lock on a Spartan-7, and what metastability does to a design that only ever ran in simulation.">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto+Slab:wght@400;500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -27,11 +27,11 @@
       <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#8b9189;margin-bottom:22px">
         <span style="color:#B3A369">FSM-LOCK-4</span><span style="color:#3a3e43">|</span>
         <span>SystemVerilog</span><span style="color:#3a3e43">|</span>
-        <span>Basys3 · Artix-7</span><span style="color:#3a3e43">|</span>
+        <span>Spartan Edge Accelerator · Spartan-7</span><span style="color:#3a3e43">|</span>
         <span style="border:1px solid #3a3e43;padding:2px 8px;color:#c8ccc6">Hardware tested</span>
       </div>
       <h1 style="font-family:'Roboto Slab',serif;font-weight:500;font-size:44px;line-height:1.14;letter-spacing:-0.02em;color:#e8ebe6;margin:0 0 18px;max-width:21ch">A programmable lock, and the day simulation stopped being enough</h1>
-      <p style="font-size:18px;line-height:1.6;max-width:62ch;color:#9aa09a;margin:0 0 26px">A four-digit lock in SystemVerilog on a Basys3. It passed every simulation and then behaved erratically on the board, which is how I learned what a synchronizer chain is for.</p>
+      <p style="font-size:18px;line-height:1.6;max-width:62ch;color:#9aa09a;margin:0 0 26px">A four-digit lock in SystemVerilog on a Spartan Edge Accelerator board. It passed every simulation and then behaved erratically on the board, which is how I learned what a synchronizer chain is for.</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <a href="https://github.com/Livingcolt1178/Finite-State-Machine-Lock" target="_blank" rel="noopener" style="font-family:'Roboto Mono',monospace;border:1px solid #B3A369;color:#B3A369;padding:10px 16px;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none">View repository →</a>
         <a href="#fsm-spec" style="font-family:'Roboto Mono',monospace;border:1px solid #3a3e43;color:#c8ccc6;padding:10px 16px;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none">Specifications</a>
@@ -96,8 +96,8 @@
     <div style="padding:40px 0 34px;border-bottom:1px solid #23262a">
       <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">4.0 — On the board</div>
       <figure style="margin:0">
-        <div class="nb-slot" style="width:100%;height:320px">Photo goes here: the Basys3 with the green unlock LED lit.</div>
-        <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">Basys3, Artix-7. Red at power-up, green on a correct sequence, auto-lock after five seconds.</figcaption>
+        <div class="nb-slot" style="width:100%;height:320px">Photo goes here: the board with the green unlock LED lit.</div>
+        <figcaption style="font-family:'Roboto Mono',monospace;font-size:11px;color:#6e746d;margin-top:10px;letter-spacing:0.04em">Spartan Edge Accelerator, XC7S15. Red at power-up, green on a correct sequence, auto-lock after five seconds.</figcaption>
       </figure>
     </div>
   
@@ -131,7 +131,7 @@
         <div style="padding:16px 0 6px 26px">
           <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px;max-width:600px">
             <tbody>
-              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Device</td><td style="padding:9px 0;color:#c8ccc6">Artix-7, Basys3, Vivado 2024.1</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Device</td><td style="padding:9px 0;color:#c8ccc6">Spartan-7 XC7S15, Spartan Edge Accelerator, Vivado 2024.1</td></tr>
               <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Slice utilization</td><td style="padding:9px 0;color:#c8ccc6">Under 5%</td></tr>
               <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Maximum clock frequency</td><td style="padding:9px 0;color:#c8ccc6">Above 100 MHz</td></tr>
               <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Critical warnings</td><td style="padding:9px 0;color:#c8ccc6">0</td></tr>
@@ -158,7 +158,7 @@
   </div>
   <footer class="site-footer">
     <div class="footer-inner">
-      <a href="mailto:nbramhall3@gatech.edu">nbramhall3@gatech.edu</a>
+      <a href="mailto:nicholas.bramhall1@gmail.com">nicholas.bramhall1@gmail.com</a>
       <a href="https://github.com/Livingcolt1178" target="_blank" rel="noopener">GitHub</a>
       <a href="http://www.linkedin.com/in/nicholas-bramhall-1baa88389" target="_blank" rel="noopener">LinkedIn</a>
       <span class="footer-note">Nicholas Bramhall · Georgia Tech</span>

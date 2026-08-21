@@ -37,17 +37,17 @@
             <td style="padding:20px 20px 20px 0;color:#B3A369;width:150px;vertical-align:top">RV32I-5S</td>
             <td style="padding:20px 20px 20px 0;vertical-align:top">
               <a href="riscv-cpu.html" style="font-family:'Roboto Slab',serif;font-size:19px;text-decoration:none">RISC-V CPU</a>
-              <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">A 5-stage pipelined RV32I core, compared against Spike at every retirement. Control and data hazards are resolved in hardware rather than papered over with NOPs.</div>
+              <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">A 5-stage pipelined RV32I core, compared against Spike at every retirement. Control and data hazards are resolved in hardware rather than papered over with NOPs. Both memories now sit in block RAM and the core places and routes on an xc7s15.</div>
             </td>
-            <td style="padding:20px 0;vertical-align:top;width:170px;color:#8b9189;line-height:1.9">34/37 instructions<br>CPI 1.31<br><span style="color:#c8ccc6">In development</span></td>
+            <td style="padding:20px 0;vertical-align:top;width:170px;color:#8b9189;line-height:1.9">34/37 instructions<br>6/6 vs Spike · 62 MHz<br><span style="color:#c8ccc6">In development</span></td>
           </tr>
           <tr style="border-top:1px solid #23262a">
             <td style="padding:20px 20px 20px 0;color:#B3A369;vertical-align:top">DSP-RAF-N</td>
             <td style="padding:20px 20px 20px 0;vertical-align:top">
               <a href="digital-signal-processing.html" style="font-family:'Roboto Slab',serif;font-size:19px;text-decoration:none">Rolling Average Filter</a>
-              <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">An ADC to DSP to DAC pipeline on a Spartan-7, filtering a live analog signal in real time. The measured rolloff at the 64-tap cutoff lands on −3 dB.</div>
+              <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">An ADC to DSP to DAC pipeline on a Spartan-7. It ran end to end on hardware and I said it was verified, then a reviewer noticed the output was as noisy as the input. The write-up is now the root-cause analysis of my own overclaim.</div>
             </td>
-            <td style="padding:20px 0;vertical-align:top;color:#8b9189;line-height:1.9">368 LUTs · 0 DSP<br>21.6 kHz cutoff<br><span style="color:#5f8f5a">Hardware verified</span></td>
+            <td style="padding:20px 0;vertical-align:top;color:#8b9189;line-height:1.9">368 LUTs · 0 DSP<br>21.6 kHz cutoff, target<br><span style="color:#d0a95c">RTL fixed · retest pending</span></td>
           </tr>
           <tr style="border-top:1px solid #23262a">
             <td style="padding:20px 20px 20px 0;color:#B3A369;vertical-align:top">UART-8N1</td>
@@ -61,7 +61,7 @@
             <td style="padding:20px 20px 20px 0;color:#B3A369;vertical-align:top">FSM-LOCK-4</td>
             <td style="padding:20px 20px 20px 0;vertical-align:top">
               <a href="fsm-lock.html" style="font-family:'Roboto Slab',serif;font-size:19px;text-decoration:none">FSM Lock</a>
-              <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">A four-digit programmable lock on a Basys3. It passed every simulation and then failed on the board, which is how I learned what a synchronizer chain is for.</div>
+              <div style="font-family:Roboto,sans-serif;font-size:15px;line-height:1.65;color:#9aa09a;margin-top:8px;max-width:62ch">A four-digit programmable lock on a Spartan-7. It passed every simulation and then failed on the board, which is how I learned what a synchronizer chain is for.</div>
             </td>
             <td style="padding:20px 0;vertical-align:top;color:#8b9189;line-height:1.9">10 states · 15 ms<br>0 latches<br><span style="color:#5f8f5a">Hardware tested</span></td>
           </tr>
@@ -87,7 +87,7 @@
   </div>
   <footer class="site-footer">
     <div class="footer-inner">
-      <a href="mailto:nbramhall3@gatech.edu">nbramhall3@gatech.edu</a>
+      <a href="mailto:nicholas.bramhall1@gmail.com">nicholas.bramhall1@gmail.com</a>
       <a href="https://github.com/Livingcolt1178" target="_blank" rel="noopener">GitHub</a>
       <a href="http://www.linkedin.com/in/nicholas-bramhall-1baa88389" target="_blank" rel="noopener">LinkedIn</a>
       <span class="footer-note">Nicholas Bramhall · Georgia Tech</span>
