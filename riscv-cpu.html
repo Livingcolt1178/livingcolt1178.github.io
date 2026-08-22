@@ -40,8 +40,8 @@
   
     <div style="display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid #23262a">
       <div style="padding:22px 20px 22px 0">
-        <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8b9189;margin-bottom:10px">ISA coverage</div>
-        <div style="font-family:'Roboto Slab',serif;font-weight:500;font-size:28px;line-height:1;color:#B3A369">34/37</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8b9189;margin-bottom:10px">RV32I exercised vs Spike</div>
+        <div style="font-family:'Roboto Slab',serif;font-weight:500;font-size:28px;line-height:1;color:#B3A369">37/37</div>
       </div>
       <div style="padding:22px 20px;border-left:1px solid #23262a">
         <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8b9189;margin-bottom:10px">Regression vs Spike</div>
@@ -65,7 +65,7 @@
       <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">1.0 — How it went</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:36px">
         <div>
-          <p style="font-size:16px;line-height:1.72;margin:0 0 16px">I started this because I wanted to know what actually happens between an instruction word arriving in memory and a register being written. The first version was single-cycle. It matched Spike, which told me the decode and the datapath were right, and that gave me a working reference to pipeline against.</p>
+          <p style="font-size:16px;line-height:1.72;margin:0 0 16px">I started this because I learn best by doing. Building a small scale core and seeing where the technology began is what shows me where it leads, and that is the part of computer architecture I actually wanted to understand. The first version was single-cycle. It matched Spike, which told me the decode and the datapath were right, and that gave me a working reference to pipeline against.</p>
           <p style="font-size:16px;line-height:1.72;margin:0">Splitting it into five stages broke everything that depended on an instruction finishing before the next one started. To get the pipeline running before I had hazard hardware, I wrote a small script that pads test programs with NOPs between dependent instructions. Those padded programs are still in the regression suite, because they are the same code with the hazards removed: if forwarding ever starts producing wrong values, the padded and unpadded runs disagree and I know where to look.</p>
         </div>
         <div>
@@ -123,7 +123,7 @@
   
     <div id="rv-synth" style="padding:40px 0 34px;border-bottom:1px solid #23262a">
       <div style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B3A369;margin-bottom:20px">4.0 — Synthesis and timing on the Spartan-7</div>
-      <p style="font-size:16px;line-height:1.72;max-width:74ch;margin:0 0 20px">Both memories started life as arrays of flip-flops, which is fine in simulation and hopeless on a part this size. At 512 words each the design came out at 189% of the LUTs and 106% of the flops on an xc7s15 and would not place, so there was no timing number at all. Moving them into block RAM took two things, both necessary and neither sufficient on its own: a synchronous read, which makes block mapping legal, and the style attribute, which makes the tool actually choose it. Vivado silently picked logic for the instruction ROM and distributed RAM for the data cache until it was told not to.</p>
+      <p style="font-size:16px;line-height:1.72;max-width:74ch;margin:0 0 20px">Both memories started out as arrays of flip-flops, which simulates fine and does not fit on the part. At 512 words each the design came out at 189% of the LUTs and 106% of the flops on an xc7s15, so it never placed and I had no timing number at all. Moving them into block RAM took two things and I needed both of them, neither one on its own was enough. First a synchronous read, which is what makes block mapping legal in the first place, and then the style attribute, which is what makes the tool actually choose it. Until I told it otherwise Vivado quietly picked logic for the instruction ROM and distributed RAM for the data cache.</p>
       <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px;max-width:720px;margin:0 0 20px">
         <thead><tr style="border-bottom:1px solid #23262a"><th style="text-align:left;padding:8px 0;font-weight:400;color:#8b9189;letter-spacing:0.1em;font-size:11px;text-transform:uppercase">Metric</th><th style="text-align:left;padding:8px 0;font-weight:400;color:#8b9189;letter-spacing:0.1em;font-size:11px;text-transform:uppercase">Memories in flops</th><th style="text-align:left;padding:8px 0;font-weight:400;color:#8b9189;letter-spacing:0.1em;font-size:11px;text-transform:uppercase">Memories in BRAM</th></tr></thead>
         <tbody>
@@ -137,12 +137,12 @@
       </table>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:36px">
         <div>
-          <p style="font-size:16px;line-height:1.72;margin:0 0 16px">This was a trade and not a free win. Roughly 13× the LUTs and 44× the flops came back, and about 7&nbsp;MHz of Fmax went the other way. The clock constraint stayed fixed at 10&nbsp;ns for every build so the rows are comparable, which means the failing setup here says the design is not a 100&nbsp;MHz design, not that it is broken. Hold is clean in every build, and that is the one that would have meant broken at any frequency.</p>
-          <p style="font-size:16px;line-height:1.72;margin:0">The other thing worth recording is that I predicted this wrong. My prediction was that block RAM would not move WNS much, since the worst path at the time was branch resolution feeding back into fetch and the branch cone does not touch memory. WNS got 1.64&nbsp;ns worse instead, because removing that much area changes which path is worst.</p>
+          <p style="font-size:16px;line-height:1.72;margin:0 0 16px">What I actually did here was trade frequency for area. Roughly 13× the LUTs and 44× the flops came back, and about 7&nbsp;MHz of Fmax went the other way. I kept the clock constraint fixed at 10&nbsp;ns for every build so the rows stay comparable, thus the failing setup is telling me this is not a 100&nbsp;MHz design rather than telling me it is broken. Hold is clean in every build, and hold is the one that would have meant broken at any frequency.</p>
+          <p style="font-size:16px;line-height:1.72;margin:0">The other thing worth recording is that I predicted this wrong. I said block RAM would not move WNS much, and my reasoning was that the worst path at the time was branch resolution feeding back into fetch, and the branch cone does not touch memory anywhere. WNS got 1.64&nbsp;ns worse instead. Removing that much area changes which path is the worst one, and I had not accounted for that.</p>
         </div>
         <div>
-          <p style="font-size:16px;line-height:1.72;margin:0 0 16px">The critical path is now the load return, start to finish in one cycle: the block RAM's clock-to-out, the lane mux, sign extension, the LOAD select, and then the register file's write-first bypass, landing in the ID/EX register. Note the endpoint is the bypass rather than the forwarding mux. Both consume the same value and the bypass is the longer of the two.</p>
-          <p style="font-size:16px;line-height:1.72;margin:0">Choosing the primitive by capacity would have got this wrong. The register file is only 32 words and stays distributed anyway, because a RAMB has two ports total and 2R+1W would need the array duplicated, its registered read would push ID into two stages, and its read-during-write modes are same-port only so the bypass mux would still be there with a latency mismatch on top. Port count and read latency pick the primitive, not size.</p>
+          <p style="font-size:16px;line-height:1.72;margin:0 0 16px">The critical path is now the load return, start to finish in a single cycle: the block RAM's clock-to-out, then the lane mux, then sign extension, then the LOAD select, and finally the register file's write-first bypass landing in the ID/EX register. The endpoint is worth noticing, it is the bypass and not the forwarding mux. Both of them consume the same value, the bypass is just the longer of the two.</p>
+          <p style="font-size:16px;line-height:1.72;margin:0">The register file went the other way and stays distributed, even though at 32 words it is the smallest memory in the design. A RAMB only has two ports total, so 2R+1W would mean duplicating the array. Its read is registered, which would push ID into two stages. And its read-during-write modes are same-port only, so the bypass mux would still be sitting there anyway, now with a latency mismatch on top of it. Capacity told me nothing useful about any of this. Port count and read latency are what actually decided it.</p>
         </div>
       </div>
     </div>
@@ -162,7 +162,7 @@
         <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>6.1 Pipeline and hazard handling</summary>
         <div style="padding:16px 0 6px 26px;font-size:15px;line-height:1.72;max-width:74ch;color:#9aa09a">
           <p style="margin:0 0 12px">Forwarding is a mux per operand at the entrance to EX, sourcing from the producer one instruction ahead or two ahead, with newer-wins priority. Both operands are decided independently, and the forwarded value feeds the ALU, the target-address constructor and the store-data path from a single point, so JALR bases and store data cannot be missed.</p>
-          <p style="margin:0">Pipeline registers are packed structs in riscv_pkg.sv, with control bundles nested inside them, so the taper is enforced by the type system. All four flops live in top_lvl.sv, which puts the entire stall and flush policy in eight adjacent lines. A zeroed register struct is a NOP bubble, so reset, flush and the retire signal fall out of the type definition.</p>
+          <p style="margin:0">Pipeline registers are packed structs in riscv_pkg.sv, with control bundles nested inside them, so the taper is enforced by the type system. All four flops live in top_lvl.sv, and the entire stall and flush policy is eight assignments sitting next to the flop they gate. A zeroed register struct is a NOP bubble, so reset, flush and the retire signal fall out of the type definition.</p>
         </div>
       </details>
   
@@ -172,7 +172,7 @@
           <p style="margin:0 0 12px">Spike is the golden reference. Its value is independence: expected values come from software written by other people from the specification, not from the same understanding that produced the RTL. The testbench compares per retirement rather than per cycle, so pipeline fill, flushes and stalls need no special handling.</p>
           <p style="margin:0 0 12px">Six fields are compared at the MEM/WB boundary, ordered cheapest to interpret first, so the earliest failure is also the most localising:</p>
           <pre style="font-family:'Roboto Mono',monospace;font-size:12px;color:#dfe4de;background:#00253f;border-left:2px solid #B3A369;padding:12px 14px;margin:0 0 12px;overflow-x:auto">pc → instruction word → rd → rd_data → mem_addr → mem_data</pre>
-          <p style="margin:0">coverage.S retires 107. loaduse.S exists because coverage.S contains zero load-use pairs at distance two or less and therefore passes whether or not the interlock exists. It has 20 distance-1 pairs that must stall, 2 distance-2 pairs that must not, and two negative controls that check stalls do not fire when they shouldn't. loads.S came from the same reasoning: no load test can catch a write enable that is too wide, so it writes one sub-word field into a known word and reads the whole word back.</p>
+          <p style="margin:0">coverage.S retires 107. loaduse.S exists because coverage.S contains zero load-use pairs at distance two or less and therefore passes whether or not the interlock exists. It has 20 distance-1 pairs that must stall, 2 distance-2 pairs that must not, and two negative controls that check stalls do not fire when they shouldn't. loads.S came out of the same reasoning. No load test can catch a write enable that is too wide, so what it does instead is write one sub-word field into a known word and then read the whole word back.</p>
         </div>
       </details>
   
@@ -182,8 +182,8 @@
           <table style="width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:13px;max-width:660px">
             <tbody>
               <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Reset vector</td><td style="padding:9px 0;color:#c8ccc6">0x8000_0000</td></tr>
-              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Instruction memory</td><td style="padding:9px 0;color:#c8ccc6">1024 words, partial decode</td></tr>
-              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Data memory</td><td style="padding:9px 0;color:#c8ccc6">256 words, partial decode</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Instruction memory</td><td style="padding:9px 0;color:#c8ccc6">512 words · RAMB18, registered read</td></tr>
+              <tr style="border-bottom:1px solid #1a1d21"><td style="padding:9px 0;color:#8b9189">Data memory</td><td style="padding:9px 0;color:#c8ccc6">512 words · RAMB18, byte-enable write</td></tr>
               <tr><td style="padding:9px 0;color:#8b9189">tohost / fromhost</td><td style="padding:9px 0;color:#c8ccc6">0x8000_13F0 / 0x8000_13F8</td></tr>
             </tbody>
           </table>
@@ -194,8 +194,9 @@
       <details style="border-top:1px solid #23262a;border-bottom:1px solid #23262a;padding:16px 0">
         <summary style="font-family:'Roboto Mono',monospace;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;display:flex;gap:14px;align-items:center;color:#e8ebe6"><span data-plus style="color:#B3A369;width:12px;display:inline-block"></span>6.4 What is not done yet</summary>
         <div style="padding:16px 0 6px 26px;font-size:15px;line-height:1.72;max-width:74ch;color:#9aa09a">
-          <p style="margin:0 0 12px">bge, bltu and bgeu are implemented but no test program exercises them, so they are unverified rather than known-good. Inverted and unsigned comparisons are exactly where a sign-handling bug would hide.</p>
-          <p style="margin:0">Three cases that trap in real RV32I are deferred: misaligned data access, misaligned instruction fetch, and illegal instructions, which currently decode to a silent NOP. FENCE, ECALL/EBREAK and the Zicsr instructions are not implemented. Synthesis is done and measured, timing closure is not attempted — the design places and routes with clean hold at 62 MHz on a −1 part, and there has been no effort spent on setup. Nothing has run on the board yet.</p>
+          <p style="margin:0 0 12px">All 37 RV32I instructions decode and all 37 are now exercised against Spike, so instruction coverage is not what is left. The unsigned branches were the last gap and I closed them on purpose rather than by accident, because inverted and unsigned comparison is where a sign handling bug would hide, and no amount of testing on the signed forms would have found it.</p>
+          <p style="margin:0 0 12px">The load-use detector is imprecise, and it costs me cycles rather than correctness. It compares the load's destination register against both <span style="font-family:'Roboto Mono',monospace;font-size:14px;color:#c8ccc6">inst[19:15]</span> and <span style="font-family:'Roboto Mono',monospace;font-size:14px;color:#c8ccc6">inst[24:20]</span> of the instruction behind it, without ever asking what format that instruction is. On an I-type consumer those second five bits are immediate bits and not a source register at all, thus a load into x5 followed by an addi that happens to have 5 in the low immediate will stall for a bubble it never needed. It is on my list because the fix is a format check the decoder is already computing.</p>
+          <p style="margin:0">Three cases that trap in real RV32I are deferred: misaligned data access, misaligned instruction fetch, and illegal instructions, which currently decode to a silent NOP. FENCE decodes and retires as a no-op. That happens to be architecturally correct on a single hart in-order core, but I want to be clear that it fell out that way rather than being something I set out to implement. ECALL/EBREAK and the Zicsr instructions are not implemented. Synthesis is done and measured but I have not attempted timing closure. The design places and routes with clean hold at 62 MHz on a −1 part, and I have put no effort into setup at all. Nothing has run on the board yet.</p>
         </div>
       </details>
     </div>
